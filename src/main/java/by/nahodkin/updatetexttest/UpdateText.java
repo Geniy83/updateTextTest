@@ -23,21 +23,22 @@ public class UpdateText {
     private static List<Object> getAllElementFromObject(Object obj, Class<?> toSearch) {
         List<Object> result = new ArrayList<>();
         if (obj instanceof JAXBElement) obj = ((JAXBElement<?>) obj).getValue();
-        if (obj.getClass().equals(toSearch))
-            result.add(obj);
+        if (obj.getClass().equals(toSearch)) result.add(obj);
         else if (obj instanceof ContentAccessor) {
             List<?> children = ((ContentAccessor) obj).getContent();
             for (Object child : children) {
                 result.addAll(getAllElementFromObject(child, toSearch));
             }
-
         }
         return result;
     }
     public void update() throws FileNotFoundException, Docx4JException {
+        getTemplate().getMainDocumentPart();
+
         List<Object> texts = getAllElementFromObject(getTemplate().getMainDocumentPart(), Text.class);
         for (Object text : texts) {
             Text textElement = (Text) text;
+// Здесь я могу заменить текст
             System.out.println(textElement.getValue());
         }
     }
