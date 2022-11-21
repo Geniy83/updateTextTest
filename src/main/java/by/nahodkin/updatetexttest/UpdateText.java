@@ -8,8 +8,10 @@ import org.docx4j.wml.ContentAccessor;
 import org.docx4j.wml.Text;
 import org.springframework.stereotype.Component;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,6 +20,9 @@ public class UpdateText {
 
     private WordprocessingMLPackage getTemplate() throws Docx4JException, FileNotFoundException {
         return WordprocessingMLPackage.load(new FileInputStream("./src/main/resources/test.docx"));
+    }
+    private WordprocessingMLPackage getTemplate(String name) throws Docx4JException, FileNotFoundException {
+        return WordprocessingMLPackage.load(new FileInputStream(name));
     }
 
     private static List<Object> getAllElementFromObject(Object obj, Class<?> toSearch) {
@@ -32,13 +37,28 @@ public class UpdateText {
         }
         return result;
     }
-    public void update() throws FileNotFoundException, Docx4JException {
-        getTemplate().getMainDocumentPart();
+    private void replacePlaceholder(WordprocessingMLPackage template, String name, String placeholder ) {
+        List<Object> texts = getAllElementFromObject(template.getMainDocumentPart(), Text.class);
 
-        List<Object> texts = getAllElementFromObject(getTemplate().getMainDocumentPart(), Text.class);
         for (Object text : texts) {
             Text textElement = (Text) text;
-// Здесь я могу заменить текст
+            if (textElement.getValue().equals(placeholder)) {
+                textElement.setValue(name);
+            }
+        }
+    }
+
+    private void writeDocxToStream(WordprocessingMLPackage template, String target) throws Docx4JException {
+        File f = new File(target);
+        template.save(f);
+    }
+
+    public void update() throws FileNotFoundException, Docx4JException {
+
+
+        List<Object> texts = getAllElementFromObject(getTemplate("./src/main/resources/test.docx").getMainDocumentPart(), Text.class);
+        for (Object text : texts) {
+            Text textElement = (Text) text;
             System.out.println(textElement.getValue());
         }
     }
