@@ -37,7 +37,7 @@ public class UpdateText {
         }
         return result;
     }
-    private void replacePlaceholder(WordprocessingMLPackage template, String name, String placeholder ) {
+    private void replacePlaceholder(WordprocessingMLPackage template, String name, String placeholder ) throws Docx4JException {
         List<Object> texts = getAllElementFromObject(template.getMainDocumentPart(), Text.class);
 
         for (Object text : texts) {
@@ -46,6 +46,7 @@ public class UpdateText {
                 textElement.setValue(name);
             }
         }
+        writeDocxToStream(template, "./src/main/resources/new.docx");
     }
 
     private void writeDocxToStream(WordprocessingMLPackage template, String target) throws Docx4JException {
@@ -54,12 +55,6 @@ public class UpdateText {
     }
 
     public void update() throws FileNotFoundException, Docx4JException {
-
-
-        List<Object> texts = getAllElementFromObject(getTemplate("./src/main/resources/test.docx").getMainDocumentPart(), Text.class);
-        for (Object text : texts) {
-            Text textElement = (Text) text;
-            System.out.println(textElement.getValue());
-        }
+        replacePlaceholder(getTemplate(), "ПАПА+ДАША+МАМА= СЕМЬЯ ", "QQQ");
     }
 }
